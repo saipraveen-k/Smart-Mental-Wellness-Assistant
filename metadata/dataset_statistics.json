@@ -1,0 +1,14 @@
+{
+    "total_cleaned_samples": 37184,
+    "class_counts": {
+        "Joy": 25797,
+        "Anger": 7375,
+        "Sadness": 3268,
+        "Anxiety": 744
+    },
+    "splits": {
+        "train": 29747,
+        "validation": 3718,
+        "test": 3719
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "original_samples": 211225,
+    "final_samples": 37184,
+    "train_samples": 29747,
+    "validation_samples": 3718,
+    "test_samples": 3719,
+    "recommended_max_length": 64
+}

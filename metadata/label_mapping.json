@@ -1,0 +1,44 @@
+{
+    "label2id": {
+        "Joy": 0,
+        "Sadness": 1,
+        "Anger": 2,
+        "Anxiety": 3
+    },
+    "id2label": {
+        "0": "Joy",
+        "1": "Sadness",
+        "2": "Anger",
+        "3": "Anxiety"
+    },
+    "goemotions_to_target_mapping": {
+        "joy": "Joy",
+        "amusement": "Joy",
+        "excitement": "Joy",
+        "gratitude": "Joy",
+        "optimism": "Joy",
+        "love": "Joy",
+        "pride": "Joy",
+        "relief": "Joy",
+        "admiration": "Joy",
+        "approval": "Joy",
+        "caring": "Joy",
+        "desire": "Joy",
+        "sadness": "Sadness",
+        "grief": "Sadness",
+        "disappointment": "Sadness",
+        "remorse": "Sadness",
+        "embarrassment": "Sadness",
+        "anger": "Anger",
+        "annoyance": "Anger",
+        "disapproval": "Anger",
+        "fear": "Anxiety",
+        "nervousness": "Anxiety",
+        "confusion": "UNMAPPED",
+        "curiosity": "UNMAPPED",
+        "disgust": "UNMAPPED",
+        "realization": "UNMAPPED",
+        "surprise": "UNMAPPED",
+        "neutral": "UNMAPPED"
+    }
+}
