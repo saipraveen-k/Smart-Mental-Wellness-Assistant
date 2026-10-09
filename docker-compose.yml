@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: smwa-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=mental_wellness
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: smwa-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017
+      - MONGODB_DATABASE=mental_wellness
+      - TEXT_DATASET_ID=SetFit/go_emotions
+      - CV_DATASET_ID=Jeneral/fer-2013
+      - TEXT_MODEL_NAME=distilbert-base-uncased
+      - TEXT_MODALITY_WEIGHT=0.65
+      - VISION_MODALITY_WEIGHT=0.35
+      - JWT_SECRET=production-secret-key-change-me
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:5173
+    depends_on:
+      - mongodb
+    volumes:
+      - ./ml/artifacts:/app/ml/artifacts
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: smwa-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongodb_data:

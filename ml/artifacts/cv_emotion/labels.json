@@ -1,0 +1,92 @@
+{
+  "classes": [
+    "angry",
+    "disgust",
+    "fear",
+    "happy",
+    "neutral",
+    "sad",
+    "surprise"
+  ],
+  "id2label": {
+    "0": "angry",
+    "1": "disgust",
+    "2": "fear",
+    "3": "happy",
+    "4": "neutral",
+    "5": "sad",
+    "6": "surprise"
+  },
+  "label2id": {
+    "angry": 0,
+    "disgust": 1,
+    "fear": 2,
+    "happy": 3,
+    "neutral": 4,
+    "sad": 5,
+    "surprise": 6
+  },
+  "wellness_mapping": {
+    "happy": "Joy",
+    "sad": "Sadness",
+    "angry": "Anger",
+    "fear": "Anxiety",
+    "neutral": "Neutral",
+    "disgust": "Neutral/Other",
+    "surprise": "Neutral/Other"
+  },
+  "note": "Facial-expression analysis only: these labels describe visible expressions, not a person's true internal emotional state.",
+  "dataset": {
+    "kind": "cv",
+    "dataset_id": "Jeneral/fer-2013",
+    "revision": "3a46cbfae3f5b348449335f300666a0ae330f121",
+    "source": "REMOTE",
+    "cache_dir": "C:\\Users\\saipr\\.cache\\huggingface\\hub",
+    "loaded_at": "2026-10-08T19:00:14.814946+00:00",
+    "loader": "hub_file_loader",
+    "splits": {
+      "train": 28709,
+      "test": 7178
+    },
+    "validation": {
+      "ok": true,
+      "splits": {
+        "train": 28709,
+        "test": 7178
+      },
+      "classes": [
+        "angry",
+        "disgust",
+        "fear",
+        "happy",
+        "neutral",
+        "sad",
+        "surprise"
+      ],
+      "image_size": [
+        48,
+        48
+      ],
+      "per_class": {
+        "train": {
+          "angry": 3995,
+          "disgust": 436,
+          "fear": 4097,
+          "happy": 7215,
+          "neutral": 4965,
+          "sad": 4830,
+          "surprise": 3171
+        },
+        "test": {
+          "angry": 958,
+          "disgust": 111,
+          "fear": 1024,
+          "happy": 1774,
+          "neutral": 1233,
+          "sad": 1247,
+          "surprise": 831
+        }
+      }
+    }
+  }
+}

@@ -1,161 +1,232 @@
+# SMART MENTAL WELLNESS ASSISTANT
 
-## 📌 Executive Summary
+Production-quality academic prototype for an **AI-Assisted Multimodal Wellness Platform** combining text emotion recognition, facial-expression analysis, multimodal emotion fusion, crisis screening, stressor detection, longitudinal mood tracking, mood forecasting, personalized CBT-inspired/mindfulness interventions, user feedback learning, explainable AI, and privacy controls.
 
-The [`preprocess_goemotions.ipynb`](file:///c:/tempp/projects/Smart%20Mental%20Wellness%20Assistant/preprocess_goemotions.ipynb) notebook implements a data preprocessing and cleaning pipeline for the **Smart Mental Wellness Assistant**. 
-
-It transforms the raw **GoEmotions** dataset (211,225 fine-grained Reddit comments across 28 emotion taxonomy labels) into a 4-class emotion classification dataset target tailored for mental wellness applications:
-1. **Joy** (`0`)
-2. **Sadness** (`1`)
-3. **Anger** (`2`)
-4. **Anxiety** (`3`)
-
-The resulting data splits (`train.csv`, `validation.csv`, `test.csv`) are validated and structured for fine-tuning Transformer models such as **DistilBERT** or **BERT**.
+> [!IMPORTANT]
+> **Non-Clinical Disclaimer:** This application provides AI-assisted wellness support and is **not** a medical diagnostic system, therapist, or emergency service. Facial-expression analysis estimates visible facial signals only — it cannot determine a person's true internal emotional state.
 
 ---
 
-## 🏗️ Architecture & Pipeline Workflow
+## 1. Project Overview
+
+The **Smart Mental Wellness Assistant** is built to bridge multimodal perception and personal wellness support. It ingests user check-ins via:
+- **Written text** (analyzed via fine-tuned `DistilBERT`)
+- **Facial expressions** (analyzed via custom `FacialEmotionCNN`)
+
+The system normalizes these inputs into a common 5-class wellness taxonomy (**Joy, Sadness, Anger, Anxiety, Neutral**), detects contextual domain stressors (Academic, Work, Career, Relationships, etc.), screens for acute distress using a Columbia Suicide Severity Rating Scale (C-SSRS) trained model, forecasts future mood trajectories using daily series statistics, and delivers personalized CBT-inspired or mindfulness-oriented exercises.
+
+---
+
+## 2. Key Features
+
+- **Multimodal Emotion Perceptron:** Configurable weighted fusion ($W_{text} = 0.65, W_{vision} = 0.35$) of text and facial expression signals into a unified wellness estimate.
+- **Dynamic Dataset Provenance:** Loads datasets directly from Hugging Face Hub repositories (`SetFit/go_emotions`, `Jeneral/fer-2013`, `av9ash/CSSR-S_labelled_suicidewatch_posts_reddit`) with local caching and runtime structure validation. No hardcoded CSV files.
+- **Dedicated Crisis Subsystem:** High-recall C-SSRS distress classifier prioritizing sensitivity to trigger instant safety overrides and present regional crisis hotlines.
+- **Contextual Stressor Detection:** Identifies domain context (Academic, Financial, Health, Family, etc.) and intensity level using weighted cue phrase lexicons and intensifiers.
+- **Explainable AI (XAI):** Word-level token attributions for text predictions and Grad-CAM visual heatmaps for facial expression analysis.
+- **Mood History & Time-Series Forecasting:** Real time-series trend analysis (moving average, trend regression, Holt-Winters) providing 7-day and 14-day forecasts when sufficient historical data exists.
+- **Personalized Intervention Engine & Feedback Loop:** CBT-inspired reframing, guided 4-7-8 breathing, 5-4-3-2-1 grounding, and journaling exercises re-ranked dynamically based on stored user feedback.
+- **Privacy & Consent Controls:** Zero permanent storage of raw camera frames by default, itemized data export, and single-click history deletion.
+- **Real-Time Interactive Dashboard & Web Application:** Built with React 18, Vite, TypeScript, and modern responsive design system.
+
+---
+
+## 3. Architecture Specification
 
 ```mermaid
-flowchart TD
-    A["Raw GoEmotions CSV<br/>(211,225 rows, 37 cols)"] --> B["Step 1: Load & Inspect Dataset"]
-    B --> C["Step 2: Text Normalization<br/>(HTML unescape, strip control chars)"]
-    C --> D["Step 3 & 4: Emotion Mapping & Ambiguity Resolution<br/>(28 GoEmotions -> 4 Target Classes)"]
-    D --> E["Step 5: Deduplication & Data Leakage Prevention<br/>(Remove exact duplicates & label conflicts)"]
-    E --> F["Step 6: Class Distribution & Imbalance Analysis<br/>(37,184 clean samples)"]
-    F --> G["Step 7: Tokenization & Length Analysis<br/>(DistilBERT Fast Tokenizer, recommended max_len=64)"]
-    G --> H["Step 8: Stratified Train / Val / Test Split<br/>(80% / 10% / 10% with seed 42)"]
-    H --> I["Step 9: Automated 8-Point Quality Checks"]
-    I --> J["Outputs: Processed CSVs, Metadata JSONs & Plots"]
+graph TD
+    User["User Interface (React + Vite + TS)"]
+    API["FastAPI Backend Layer"]
+    
+    subgraph "Inference & Safety Subsystems"
+        TextModel["DistilBERT Text Emotion Classifier"]
+        CVModel["FacialEmotionCNN Vision Classifier"]
+        FusionEngine["Multimodal Fusion Engine"]
+        CrisisModel["Crisis Classifier Subsystem"]
+        StressorEngine["Stressor Detection Engine"]
+        Forecaster["Mood Forecaster"]
+        InterventionEngine["Personalized Intervention Engine"]
+    end
+    
+    subgraph "Persistence & Provenance"
+        DatasetMgr["Dataset Manager (Hugging Face Hub)"]
+        MongoDB[(MongoDB Database)]
+    end
+
+    User <--> API
+    API --> TextModel
+    API --> CVModel
+    API --> FusionEngine
+    API --> CrisisModel
+    API --> StressorEngine
+    API --> Forecaster
+    API --> InterventionEngine
+    API --> MongoDB
+    DatasetMgr --> TextModel
+    DatasetMgr --> CVModel
+```
+
+Detailed architectural documentation is available in [`docs/ARCHITECTURE.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/ARCHITECTURE.md).
+
+---
+
+## 4. Dataset Sources & Provenance
+
+All datasets are dynamically fetched from the Hugging Face Hub using `datasets.load_dataset()` or the Hub loader:
+
+1. **Text Emotion Dataset:** [`SetFit/go_emotions`](https://huggingface.co/datasets/SetFit/go_emotions) (58,009 Reddit comments mapped to 5 wellness categories).
+2. **Computer Vision Dataset:** [`Jeneral/fer-2013`](https://huggingface.co/datasets/Jeneral/fer-2013) (35,887 48x48 grayscale facial expression images across 7 classes).
+3. **Crisis Dataset:** [`av9ash/CSSR-S_labelled_suicidewatch_posts_reddit`](https://huggingface.co/datasets/av9ash/CSSR-S_labelled_suicidewatch_posts_reddit) (C-SSRS labeled posts for LOW, MODERATE, and HIGH risk tier screening).
+
+Full dataset documentation is available in [`docs/DATASETS.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/DATASETS.md).
+
+---
+
+## 5. Normalized Wellness Taxonomy
+
+Source dataset labels are mapped to a normalized 5-class wellness taxonomy:
+
+| Category ID | Category Name | Source Text Labels (GoEmotions) | Source Vision Expression (FER-2013) |
+| :---: | :--- | :--- | :--- |
+| `0` | **Joy** | `joy`, `amusement`, `excitement`, `gratitude`, `love`, `optimism`, `pride`, `relief` | `happy` |
+| `1` | **Sadness** | `sadness`, `grief`, `disappointment`, `remorse`, `embarrassment` | `sad` |
+| `2` | **Anger** | `anger`, `annoyance`, `disapproval` | `angry` |
+| `3` | **Anxiety** | `fear`, `nervousness` | `fear` |
+| `4` | **Neutral / Other** | `neutral`, `confusion`, `curiosity`, `disgust`, `realization`, `surprise` | `neutral`, `disgust`, `surprise` |
+
+---
+
+## 6. Installation & Prerequisites
+
+### System Requirements
+- Python 3.10+
+- Node.js 18+ & npm
+- MongoDB 6.0+ running locally on port `27017`
+
+### Step 1: Environment Setup
+```bash
+# Clone and enter workspace
+git clone https://github.com/saipraveen-k/Smart-Mental-Wellness-Assistant.git
+cd "Smart Mental Wellness Assistant"
+
+# Initialize environment configuration
+python scripts/setup.py
+```
+
+### Step 2: Install Backend Dependencies
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+### Step 3: Install Frontend Dependencies
+```bash
+cd ../frontend
+npm install
 ```
 
 ---
 
-## 🔍 Detailed Breakdown of Preprocessing Steps
+## 7. Model Training & Evaluation
 
-### 1. Setup & Directory Initialization
-* **Seed & Reproducibility:** Sets `RANDOM_SEED = 42` across `numpy` and `scikit-learn`.
-* **Directories Created:**
-  * `data/raw/` – Stores original `goemotions.csv`.
-  * `data/processed/` – Stores target CSV files (`train.csv`, `validation.csv`, `test.csv`, `goemotions_4class_clean.csv`).
-  * `metadata/` – Stores JSON metadata (`label_mapping.json`, `dataset_statistics.json`, `preprocessing_report.json`).
+Model artifacts are stored in `ml/artifacts/`:
 
-* **Target Class Definition (`LABEL2ID`):**
-  | Emotion Class | Numerical ID | Included GoEmotions Fine-Grained Emotions |
-  | :--- | :---: | :--- |
-  | **Joy** | `0` | `joy`, `amusement`, `excitement`, `gratitude`, `optimism`, `love`, `pride`, `relief`, `admiration`, `approval`, `caring`, `desire` |
-  | **Sadness** | `1` | `sadness`, `grief`, `disappointment`, `remorse`, `embarrassment` |
-  | **Anger** | `2` | `anger`, `annoyance`, `disapproval` |
-  | **Anxiety** | `3` | `fear`, `nervousness` |
-  | *Unmapped* | `-1` | `confusion`, `curiosity`, `disgust`, `realization`, `surprise`, `neutral` |
+```bash
+# Train DistilBERT Text Emotion Model (GoEmotions -> Wellness Taxonomy)
+python scripts/train_text.py --epochs 2 --batch-size 32
 
----
+# Train FacialEmotionCNN Computer Vision Model (FER-2013)
+python scripts/train_cv.py --epochs 20 --batch-size 128
 
-### 2. Dataset Loading & Inspection
-* Loads `goemotions.csv` containing **211,225 rows** and **37 columns**.
-* **Columns Detected:**
-  * **Text column:** `text`
-  * **Metadata columns:** `id`, `author`, `subreddit`, `link_id`, `parent_id`, `created_utc`, `rater_id`, `example_very_unclear`.
-  * **Fine-grained binary indicators:** 28 columns (`joy`, `sadness`, `anger`, `fear`, `neutral`, etc.).
+# Train Crisis Classifier Subsystem (C-SSRS)
+python scripts/train_crisis.py
+
+# Evaluate all trained model artifacts and print metrics
+python scripts/evaluate.py
+```
+
+ML & CV pipeline details are documented in [`docs/ML_PIPELINE.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/ML_PIPELINE.md) and [`docs/CV_PIPELINE.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/CV_PIPELINE.md).
 
 ---
 
-### 3. Text Cleaning & Normalization
-Transformer models handle punctuation, casing, and emojis effectively. Therefore, heavy cleaning (like lowercasing or stemming) is avoided to preserve contextual nuances:
-* **HTML Unescaping:** Converts `&amp;` $\rightarrow$ `&`, `&gt;` $\rightarrow$ `>`, `&#39;` $\rightarrow$ `'`.
-* **Unicode Artifact Correction:** Replaces unicode replacement characters (`\ufffd`) with quotes (`'`).
-* **Control Characters:** Normalizes control whitespace characters (`\r`, `\n`, `\t`) into single spaces.
-* **Filtering:** Removes empty rows and non-meaningful text lacking alphanumeric characters or shorter than 2 characters (17 non-meaningful rows removed $\rightarrow$ 211,208 remaining).
+## 8. Running the Application
+
+### Running Backend API Server
+```bash
+cd backend
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+- Interactive Swagger API documentation: `http://localhost:8000/docs`
+
+### Running React Frontend
+```bash
+cd frontend
+npm run dev
+```
+- Open application interface: `http://localhost:5173` (or `http://localhost:3000`)
 
 ---
 
-### 4. Emotion Mapping & Multi-Label Ambiguity Resolution
-GoEmotions is multi-annotated, meaning a single text can have multiple emotion flags active across different annotators.
-* **Single-Label Active Emotion Samples:** 171,811
-* **Multi-Label Active Emotion Samples:** 35,994
-* **Mapping Strategy:**
-  1. **Cleanly Mapped (120,754 samples):** Samples having exactly **one** of the 4 target categories active.
-  2. **Ambiguous / Conflicting (8,013 samples removed):** Samples having **more than one** target category active simultaneously (e.g., text marked as both `joy` and `sadness`).
-  3. **Unmapped / Neutral (82,441 samples removed):** Samples where none of the 4 target categories are present (texts containing only neutral or unmapped emotions like `curiosity` or `realization`).
+## 9. Automated Testing & Verification
+
+Run the full automated test suite covering unit tests, API router tests, security tests, and multi-step integration flows:
+
+```bash
+# Run PyTest suite in backend
+cd backend
+pytest -v
+
+# Run End-to-End System Health Check
+python scripts/health_check.py
+```
+
+Testing procedures are documented in [`docs/TESTING.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/TESTING.md).
 
 ---
 
-### 5. Deduplication & Data Leakage Prevention
-To prevent train-test data leakage and noise:
-1. **Exact Pair Deduplication:** Removes duplicate `(text, label)` rows.
-2. **Conflicting Label Filtering:** Identifies and completely removes texts that appear multiple times with conflicting target labels due to opposing annotator ratings (11,063 unique conflicting texts removed).
-* **Final Clean Single-Label Dataset:** **37,184 samples**
+## 10. Containerized Deployment (Docker)
+
+Deploy all services (Backend, Frontend, MongoDB) using `docker-compose`:
+
+```bash
+# Launch containerized services in detached mode
+docker-compose up --build -d
+
+# Check service status
+docker-compose ps
+
+# Stop containerized services
+docker-compose down
+```
+
+Deployment guide is documented in [`docs/DEPLOYMENT.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/DEPLOYMENT.md).
 
 ---
 
-### 6. Class Distribution & Imbalance Analysis
-The resulting dataset of 37,184 samples exhibits the following class distribution:
+## 11. Comprehensive Documentation Sitemap
 
-| Class Name | Numerical Label | Sample Count | Percentage (%) |
-| :--- | :---: | :---: | :---: |
-| **Joy** | `0` | 25,797 | 69.38% |
-| **Anger** | `2` | 7,375 | 19.83% |
-| **Sadness** | `1` | 3,268 | 8.79% |
-| **Anxiety** | `3` | 744 | 2.00% |
-
-* **Total Samples:** 37,184
-* **Class Imbalance Ratio:** **34.67 : 1** (Joy vs. Anxiety).
-* **Training Recommendations Included:**
-  * **Stratified Sampling** (applied during dataset splitting).
-  * **Class-Weighted Cross-Entropy Loss** during model training (`CrossEntropyLoss(weight=class_weights)`).
-  * **Focal Loss / Oversampling** if minority class recall needs further boosting.
+| Document | Description |
+| :--- | :--- |
+| [`docs/ARCHITECTURE.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/ARCHITECTURE.md) | High-level system architecture, component interaction diagrams, taxonomy mappings. |
+| [`docs/DATASETS.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/DATASETS.md) | Hugging Face dataset IDs, dynamic loading policies, provenance verification, licensing. |
+| [`docs/ML_PIPELINE.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/ML_PIPELINE.md) | DistilBERT architecture, text preprocessing, token-level XAI, stressor detection rules. |
+| [`docs/CV_PIPELINE.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/CV_PIPELINE.md) | OpenCV face detection, FacialEmotionCNN architecture, multi-face policy, Grad-CAM. |
+| [`docs/API.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/API.md) | Complete REST API endpoint reference, request/response schema envelopes, status codes. |
+| [`docs/SAFETY.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/SAFETY.md) | Safety framework, C-SSRS risk tiering, crisis override protocol, emergency resource directory. |
+| [`docs/PRIVACY.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/PRIVACY.md) | Consent management, zero-permanent storage of camera frames, data export/purge policy. |
+| [`docs/TESTING.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/TESTING.md) | Test suite breakdown (Unit, API, Security, Integration) and health check automation. |
+| [`docs/DEPLOYMENT.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/DEPLOYMENT.md) | Docker Compose specification, environment variable reference, production readiness. |
 
 ---
 
-### 7. Text Length Analysis & DistilBERT Tokenization
-Using HuggingFace's `distilbert-base-uncased` Fast Tokenizer, the notebook calculates subword token sequence lengths:
-* **Min Tokens:** 3
-* **Max Tokens:** 82
-* **Mean Tokens:** 19.11
-* **Median Tokens:** 19.0
-* **90th Percentile:** 31.0
-* **95th Percentile:** 33.0
-* **99th Percentile:** 37.0
-* **Selection:** Recommends `max_sequence_length = 64`. This covers **> 99%** of all samples without truncating text while avoiding padding overhead.
+## 12. Safety Limitations & Honest AI Framing
+
+1. **Non-Medical Boundary:** The system does not diagnose mental health conditions or prescribe clinical treatments.
+2. **Perception Limitation:** Facial expression analysis measures visible muscular movements, not internal emotional truth.
+3. **Crisis Disclaimer:** Crisis screening prioritizes recall but cannot guarantee detection of all distress indicators or replace human intervention.
 
 ---
 
-### 8. Stratified Train / Validation / Test Splitting
-The clean dataset is partitioned with fixed seed (`42`) and stratification on `label`:
-* **Train Set (80%):** 29,747 samples
-* **Validation Set (10%):** 3,718 samples
-* **Test Set (10%):** 3,719 samples
+## 13. License & Academic Citation
 
----
-
-### 9. Automated Quality Verification (8 Checks)
-Before saving, the pipeline runs 8 automated quality assertions:
-1. ✅ **No missing text** in any split.
-2. ✅ **No missing labels** in any split.
-3. ✅ **Zero text leakage** (no overlap of texts between train, val, and test).
-4. ✅ **Exactly 4 target labels** exist (`Joy`, `Sadness`, `Anger`, `Anxiety`).
-5. ✅ **Valid numerical label IDs** (`0, 1, 2, 3`).
-6. ✅ **Split proportions** adhere to ~80% / 10% / 10%.
-7. ✅ **All 4 classes represented** in every split.
-8. ✅ **No test-set contamination**.
-
----
-
-## 📁 Output Artifacts Summary
-
-Running [`preprocess_goemotions.ipynb`](file:///c:/tempp/projects/Smart%20Mental%20Wellness%20Assistant/preprocess_goemotions.ipynb) produces the following output files:
-
-### Data Files (`data/processed/`)
-* [`train.csv`](file:///c:/tempp/projects/Smart%20Mental%20Wellness%20Assistant/data/processed/train.csv) – Training set (29,747 rows)
-* [`validation.csv`](file:///c:/tempp/projects/Smart%20Mental%20Wellness%20Assistant/data/processed/validation.csv) – Validation set (3,718 rows)
-* [`test.csv`](file:///c:/tempp/projects/Smart%20Mental%20Wellness%20Assistant/data/processed/test.csv) – Test set (3,719 rows)
-* [`goemotions_4class_clean.csv`](file:///c:/tempp/projects/Smart%20Mental%20Wellness%20Assistant/data/processed/goemotions_4class_clean.csv) – Complete cleaned 4-class dataset (37,184 rows)
-
-### Metadata Files (`metadata/`)
-* `label_mapping.json` – `label2id`, `id2label`, and `goemotions_to_target_mapping`.
-* `dataset_statistics.json` – Sample counts, class percentages, token length statistics, and split counts.
-* `preprocessing_report.json` – Full audit metrics of initial, filtered, and final sample counts.
-
-### Generated Charts
-* [`class_distribution.png`](file:///c:/tempp/projects/Smart%20Mental%20Wellness%20Assistant/class_distribution.png) – Bar chart showing target emotion class distribution.
-* [`text_length_distribution.png`](file:///c:/tempp/projects/Smart%20Mental%20Wellness%20Assistant/text_length_distribution.png) – Token length frequency histogram with 95th and 99th percentile cutoffs.
-* [`split_distribution.png`](file:///c:/tempp/projects/Smart%20Mental%20Wellness%20Assistant/split_distribution.png) – Comparison chart of class distributions across train, validation, and test splits.
+Academic Prototype — Designed and developed for educational and research exploration in multimodal AI wellness support systems.

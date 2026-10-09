@@ -1,0 +1,209 @@
+{
+  "model": "TF-IDF + LogisticRegression (class-balanced)",
+  "trained_on": {
+    "dataset_id": "av9ash/CSSR-S_labelled_suicidewatch_posts_reddit",
+    "revision": "c677b1b494c28003dcb73f6cfd2f266234d3b7e4",
+    "rows": 1170,
+    "skipped": 0,
+    "severity_distribution_source": "column 'severity' of the dataset",
+    "class_distribution": {
+      "HIGH": 245,
+      "MODERATE": 574,
+      "LOW": 351
+    }
+  },
+  "generated_at": "2026-10-08T18:01:27.585566+00:00",
+  "training": {
+    "train_samples": 2568,
+    "val_samples": 551,
+    "test_samples": 551,
+    "max_features": 30000,
+    "seed": 42,
+    "train_seconds": 1.3,
+    "thresholds": {
+      "moderate": 0.35,
+      "high": 0.25
+    },
+    "precision_floor": 0.7
+  },
+  "validation_metrics": {
+    "accuracy": 0.8657,
+    "macro_f1": 0.7548,
+    "weighted_f1": 0.8785,
+    "micro_f1": 0.8657,
+    "per_class": {
+      "LOW": {
+        "precision": 0.9869,
+        "recall": 0.8832,
+        "f1": 0.9322,
+        "support": 428
+      },
+      "MODERATE": {
+        "precision": 0.7065,
+        "recall": 0.7558,
+        "f1": 0.7303,
+        "support": 86
+      },
+      "HIGH": {
+        "precision": 0.4474,
+        "recall": 0.9189,
+        "f1": 0.6018,
+        "support": 37
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "LOW",
+        "MODERATE",
+        "HIGH"
+      ],
+      "matrix": [
+        [
+          378,
+          25,
+          25
+        ],
+        [
+          4,
+          65,
+          17
+        ],
+        [
+          1,
+          2,
+          34
+        ]
+      ]
+    },
+    "num_samples": 551,
+    "classification_report": {
+      "LOW": {
+        "precision": 0.9869451697127938,
+        "recall": 0.883177570093458,
+        "f1-score": 0.932182490752158,
+        "support": 428.0
+      },
+      "MODERATE": {
+        "precision": 0.7065217391304348,
+        "recall": 0.7558139534883721,
+        "f1-score": 0.7303370786516854,
+        "support": 86.0
+      },
+      "HIGH": {
+        "precision": 0.4473684210526316,
+        "recall": 0.918918918918919,
+        "f1-score": 0.6017699115044248,
+        "support": 37.0
+      },
+      "accuracy": 0.8656987295825771,
+      "macro avg": {
+        "precision": 0.7136117766319533,
+        "recall": 0.8526368141669164,
+        "f1-score": 0.754763160302756,
+        "support": 551.0
+      },
+      "weighted avg": {
+        "precision": 0.9069437999659538,
+        "recall": 0.8656987295825771,
+        "f1-score": 0.8784910735601312,
+        "support": 551.0
+      }
+    }
+  },
+  "test_metrics": {
+    "accuracy": 0.8766,
+    "macro_f1": 0.7404,
+    "weighted_f1": 0.8885,
+    "micro_f1": 0.8766,
+    "per_class": {
+      "LOW": {
+        "precision": 0.9974,
+        "recall": 0.9112,
+        "f1": 0.9524,
+        "support": 428
+      },
+      "MODERATE": {
+        "precision": 0.6771,
+        "recall": 0.7558,
+        "f1": 0.7143,
+        "support": 86
+      },
+      "HIGH": {
+        "precision": 0.4375,
+        "recall": 0.7568,
+        "f1": 0.5545,
+        "support": 37
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "LOW",
+        "MODERATE",
+        "HIGH"
+      ],
+      "matrix": [
+        [
+          390,
+          22,
+          16
+        ],
+        [
+          1,
+          65,
+          20
+        ],
+        [
+          0,
+          9,
+          28
+        ]
+      ]
+    },
+    "num_samples": 551,
+    "classification_report": {
+      "LOW": {
+        "precision": 0.9974424552429667,
+        "recall": 0.9112149532710281,
+        "f1-score": 0.9523809523809523,
+        "support": 428.0
+      },
+      "MODERATE": {
+        "precision": 0.6770833333333334,
+        "recall": 0.7558139534883721,
+        "f1-score": 0.7142857142857142,
+        "support": 86.0
+      },
+      "HIGH": {
+        "precision": 0.4375,
+        "recall": 0.7567567567567568,
+        "f1-score": 0.5544554455445544,
+        "support": 37.0
+      },
+      "accuracy": 0.8765880217785844,
+      "macro avg": {
+        "precision": 0.7040085961921001,
+        "recall": 0.8079285545053857,
+        "f1-score": 0.7403740374037403,
+        "support": 551.0
+      },
+      "weighted avg": {
+        "precision": 0.9098403584585417,
+        "recall": 0.8765880217785844,
+        "f1-score": 0.8884981316384165,
+        "support": 551.0
+      }
+    },
+    "crisis_vs_low": {
+      "recall": 0.9919,
+      "precision": 0.7625,
+      "false_negatives": 1,
+      "false_negative_examples": [
+        {
+          "text_excerpt": "Just sad It has been a rough couple of days. It is hard knowing that my existence here doesn't mean anything to anyone but my cat. I love he",
+          "true": "MODERATE"
+        }
+      ],
+      "note": "False negatives are safety-critical; thresholds prioritise recall."
+    }
+  }
+}

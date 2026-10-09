@@ -1,0 +1,39 @@
+{
+  "classes": [
+    "LOW",
+    "MODERATE",
+    "HIGH"
+  ],
+  "id2label": {
+    "0": "LOW",
+    "1": "MODERATE",
+    "2": "HIGH"
+  },
+  "severity_mapping": {
+    "0": "LOW",
+    "1": "MODERATE",
+    "2": "MODERATE",
+    "3": "MODERATE",
+    "4": "HIGH",
+    "5": "HIGH",
+    "6": "HIGH"
+  },
+  "dataset": {
+    "dataset_id": "av9ash/CSSR-S_labelled_suicidewatch_posts_reddit",
+    "revision": "c677b1b494c28003dcb73f6cfd2f266234d3b7e4",
+    "rows": 1170,
+    "skipped": 0,
+    "severity_distribution_source": "column 'severity' of the dataset",
+    "class_distribution": {
+      "HIGH": 245,
+      "MODERATE": 574,
+      "LOW": 351
+    }
+  },
+  "control_dataset": "SetFit/go_emotions test+validation splits (everyday non-crisis text)",
+  "decision_rule": "argmax-style thresholding: HIGH if P(HIGH)>=high_thr; else MODERATE if P(MODERATE)>=moderate_thr; else LOW. Thresholds tuned on a validation split to maximise crisis recall subject to precision >= 0.7.",
+  "thresholds": {
+    "moderate": 0.35,
+    "high": 0.25
+  }
+}

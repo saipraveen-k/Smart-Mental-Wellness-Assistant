@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Datasets & caches (never commit datasets)
+data/raw/
+.cache/
+hf_cache/
+.mongodata/
+*.parquet
+
+# Model artifacts (large binaries — use Git LFS / model registry if needed)
+ml/artifacts/**/model/
+ml/artifacts/**/*.bin
+ml/artifacts/**/*.safetensors
+ml/artifacts/**/tokenizer/
+!ml/artifacts/**/model/.gitkeep
+!ml/artifacts/**/tokenizer/.gitkeep
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Logs & OS
+*.log
+run.log
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker/

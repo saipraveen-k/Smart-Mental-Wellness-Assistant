@@ -1,0 +1,102 @@
+{
+  "label2id": {
+    "Joy": 0,
+    "Sadness": 1,
+    "Anger": 2,
+    "Anxiety": 3,
+    "Neutral": 4
+  },
+  "id2label": {
+    "0": "Joy",
+    "1": "Sadness",
+    "2": "Anger",
+    "3": "Anxiety",
+    "4": "Neutral"
+  },
+  "source_labels": "GoEmotions (28 labels)",
+  "emotion_mapping": {
+    "joy": "Joy",
+    "amusement": "Joy",
+    "excitement": "Joy",
+    "gratitude": "Joy",
+    "optimism": "Joy",
+    "love": "Joy",
+    "pride": "Joy",
+    "relief": "Joy",
+    "admiration": "Joy",
+    "approval": "Joy",
+    "caring": "Joy",
+    "desire": "Joy",
+    "sadness": "Sadness",
+    "grief": "Sadness",
+    "disappointment": "Sadness",
+    "remorse": "Sadness",
+    "embarrassment": "Sadness",
+    "anger": "Anger",
+    "annoyance": "Anger",
+    "disapproval": "Anger",
+    "fear": "Anxiety",
+    "nervousness": "Anxiety",
+    "neutral": "Neutral",
+    "confusion": "Neutral",
+    "curiosity": "Neutral",
+    "disgust": "Neutral",
+    "realization": "Neutral",
+    "surprise": "Neutral"
+  },
+  "ambiguity_policy": "Rows whose active GoEmotions labels resolve to >=2 wellness classes are excluded from training (ambiguous), never silently relabelled.",
+  "dataset": {
+    "kind": "text",
+    "dataset_id": "SetFit/go_emotions",
+    "revision": "b83b20869f3b5eff89c0a375d8d015a878826094",
+    "source": "REMOTE",
+    "cache_dir": "C:\\Users\\saipr\\.cache\\huggingface\\hub",
+    "loaded_at": "2026-10-08T17:54:52.937017+00:00",
+    "loader": "datasets.load_dataset",
+    "splits": {
+      "train": 43410,
+      "validation": 5426,
+      "test": 5427
+    },
+    "validation": {
+      "ok": true,
+      "splits": {
+        "train": 43410,
+        "validation": 5426,
+        "test": 5427
+      },
+      "required_columns": [
+        "text",
+        "admiration",
+        "amusement",
+        "anger",
+        "annoyance",
+        "approval",
+        "caring",
+        "confusion",
+        "curiosity",
+        "desire",
+        "disappointment",
+        "disapproval",
+        "disgust",
+        "embarrassment",
+        "excitement",
+        "fear",
+        "gratitude",
+        "grief",
+        "joy",
+        "love",
+        "nervousness",
+        "optimism",
+        "pride",
+        "realization",
+        "relief",
+        "remorse",
+        "sadness",
+        "surprise",
+        "neutral"
+      ],
+      "num_emotion_labels": 28
+    }
+  }
+}

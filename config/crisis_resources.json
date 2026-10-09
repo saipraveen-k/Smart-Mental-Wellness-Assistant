@@ -1,0 +1,97 @@
+{
+  "_comment": "Crisis resources shown by the safety UI. Every number here is a real, publicly documented service — add entries only if you can cite a source. This file is configurable via CRISIS_RESOURCES_FILE; the country used for the default selection is CRISIS_RESOURCES_COUNTRY.",
+  "international": [
+    {
+      "name": "Find A Helpline",
+      "description": "Verified crisis helplines in 130+ countries.",
+      "contact": "https://findahelpline.com",
+      "type": "directory",
+      "source": "https://findahelpline.com"
+    }
+  ],
+  "countries": {
+    "US": [
+      {
+        "name": "988 Suicide & Crisis Lifeline",
+        "description": "Free, confidential support 24/7 for anyone in distress.",
+        "contact": "Call or text 988",
+        "type": "phone",
+        "source": "https://988lifeline.org"
+      },
+      {
+        "name": "Crisis Text Line",
+        "description": "Free 24/7 text-based crisis support.",
+        "contact": "Text HOME to 741741",
+        "type": "sms",
+        "source": "https://www.crisistextline.org"
+      }
+    ],
+    "GB": [
+      {
+        "name": "Samaritans",
+        "description": "Free support 24/7, call or email, no judgement.",
+        "contact": "Call 116 123",
+        "type": "phone",
+        "source": "https://www.samaritans.org"
+      }
+    ],
+    "IE": [
+      {
+        "name": "Samaritans Ireland",
+        "description": "Free support 24/7.",
+        "contact": "Call 116 123",
+        "type": "phone",
+        "source": "https://www.samaritans.org/ie"
+      }
+    ],
+    "IN": [
+      {
+        "name": "Tele-MANAS (Government of India)",
+        "description": "24/7 tele-mental health support across India.",
+        "contact": "Call 14416 or 1-800-891-4416",
+        "type": "phone",
+        "source": "https://nimhans.ac.in/tele-manas/"
+      }
+    ],
+    "CA": [
+      {
+        "name": "9-8-8 Suicide Crisis Helpline",
+        "description": "24/7 crisis call, text and chat across Canada.",
+        "contact": "Call or text 988",
+        "type": "phone",
+        "source": "https://988.ca"
+      }
+    ],
+    "AU": [
+      {
+        "name": "Lifeline Australia",
+        "description": "24/7 crisis support and suicide prevention.",
+        "contact": "Call 13 11 14",
+        "type": "phone",
+        "source": "https://www.lifeline.org.au"
+      }
+    ],
+    "DE": [
+      {
+        "name": "Telefonseelsorge",
+        "description": "Free, anonymous, 24/7 crisis counselling.",
+        "contact": "Call 0800 111 0 111 or 0800 111 0 222",
+        "type": "phone",
+        "source": "https://www.telefonseelsorge.de"
+      }
+    ],
+    "FR": [
+      {
+        "name": "Numéro national de prévention du suicide",
+        "description": "Free, anonymous, 24/7.",
+        "contact": "Call 3114",
+        "type": "phone",
+        "source": "https://www.3114.fr"
+      }
+    ]
+  },
+  "emergency": {
+    "description": "If you are in immediate physical danger, contact your local emergency number (for example 911 in the US/Canada, 112 in the EU, 999 in the UK, 112 in India).",
+    "type": "emergency"
+  }
+}
