@@ -104,7 +104,15 @@ class SaveCheckinRequest(BaseModel):
 class FeedbackRequest(BaseModel):
     intervention_id: str = Field(min_length=1, max_length=64)
     rating: str = Field(pattern="^(much_better|a_little_better|no_change|worse)$")
+    notes: Optional[str] = None
     context: Optional[Dict[str, Any]] = None
+
+    @field_validator("rating", mode="before")
+    @classmethod
+    def _normalize_rating(cls, v: str) -> str:
+        if isinstance(v, str):
+            return v.strip().lower().replace(" ", "_").replace("-", "_")
+        return v
 
 
 class InterventionListResponse(BaseModel):

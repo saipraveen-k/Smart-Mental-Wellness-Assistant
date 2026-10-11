@@ -146,6 +146,7 @@ class TextEmotionAnalyzer:
             "emotion": emotion,
             "confidence": confidence,
             "distribution": distribution,
+            "probabilities": distribution,
             "explanation": explanation,
             "latency_ms": {
                 "tokenize": round(tokenize_ms, 2),

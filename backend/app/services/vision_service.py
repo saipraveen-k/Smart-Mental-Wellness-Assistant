@@ -37,6 +37,7 @@ class VisionAnalysisError(Exception):
     def __init__(self, reason: str, message: str, details: Optional[Dict] = None):
         super().__init__(message)
         self.reason = reason
+        self.code = reason
         self.message = message
         self.details = details or {}
 

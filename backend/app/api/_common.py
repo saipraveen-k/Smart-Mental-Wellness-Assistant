@@ -13,7 +13,7 @@ def map_service_errors(user_hint: str = "The analysis could not be completed.") 
     except ApiError:
         raise
     except Exception as exc:  # noqa: BLE001
-        code = getattr(exc, "code", None)
+        code = getattr(exc, "code", None) or getattr(exc, "reason", None)
         message = getattr(exc, "message", None) or str(exc)
         suggestion = getattr(exc, "suggestion", None)
 

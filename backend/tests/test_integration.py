@@ -42,11 +42,12 @@ def test_integration_text_to_intervention_flow():
     res_inter = client.get(f"/api/interventions?emotion={text_data['emotion']}&stressor={stressor_data['category']}")
     assert res_inter.status_code == 200
     inter_data = res_inter.json()["data"]
-    assert len(inter_data) >= 1
+    interventions_list = inter_data["interventions"] if isinstance(inter_data, dict) and "interventions" in inter_data else inter_data
+    assert len(interventions_list) >= 1
 
     # 5. Submit feedback
     feedback_payload = {
-        "intervention_id": inter_data[0]["id"],
+        "intervention_id": interventions_list[0]["id"],
         "rating": "Much better",
         "notes": "Integration test feedback",
     }

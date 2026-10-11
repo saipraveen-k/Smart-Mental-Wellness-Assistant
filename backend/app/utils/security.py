@@ -52,13 +52,18 @@ def get_current_user(
     from app.database.mongo import database
 
     if credentials is not None and credentials.credentials:
+        from app.utils.errors import ApiError
+
         try:
             payload = decode_access_token(credentials.credentials)
             user = database.get_user(payload.get("sub", ""))
             if user:
                 return user
+            raise ApiError("USER_NOT_FOUND", "User not found.", status_code=401)
+        except ApiError:
+            raise
         except Exception as exc:
-            logger.debug("token validation failed, falling back to guest: %s", exc)
+            raise ApiError("INVALID_TOKEN", "Invalid or expired authentication token.", status_code=401) from exc
 
     # Guest user fallback so application is open and accessible to all
     guest_email = "guest@smwa.local"

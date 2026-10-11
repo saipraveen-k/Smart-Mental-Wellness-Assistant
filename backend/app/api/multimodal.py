@@ -108,14 +108,36 @@ def analyze_multimodal(payload: MultimodalRequest, request: Request):
     timings["fusion_ms"] = fused["fusion"]["latency_ms"]
     timings["total_ms"] = round(sum(timings.values()), 2)
 
+    from app.services.wellness_service import compute_wellness_state
+    from app.services.intervention_service import recommend_interventions
+
+    wellness = compute_wellness_state(
+        emotion=fused["emotion"],
+        confidence=fused["confidence"],
+    )
+    rec_interventions = recommend_interventions(
+        emotion=fused["emotion"],
+        wellness_state=wellness["state"],
+    )
+
     return success(
         {
             "emotion": fused["emotion"],
+            "fused_emotion": fused["emotion"],
             "confidence": fused["confidence"],
+            "fused_confidence": fused["confidence"],
             "distribution": fused["distribution"],
             "text_signal": text_signal,
             "vision_signal": vision_signal,
             "fusion": fused["fusion"],
+            "wellness_state": wellness["state"],
+            "wellness": wellness,
+            "recommended_intervention": (
+                rec_interventions["interventions"][0]
+                if rec_interventions.get("interventions")
+                else None
+            ),
+            "interventions": rec_interventions.get("interventions", []),
             "latency_ms": timings,
             "disclaimer": (
                 "AI-estimated wellness signal, not a medical diagnosis. "

@@ -52,10 +52,22 @@ async def analyze_image(
             suggestion="Resize or compress the image and try again.",
         )
 
-    with map_service_errors("Facial-expression analysis failed."):
+    from app.services.vision_service import VisionAnalysisError
+    from app.utils.errors import failure
+
+    try:
         result = vision_analyzer.analyze_image(
             data,
             face_index=face_index,
             explain=explain,
         )
-    return success(result)
+        return success(result)
+    except VisionAnalysisError as va_err:
+        return failure(
+            va_err.reason,
+            va_err.message,
+            va_err.details.get("primary_face_policy") or "Try a clearer front-facing photo.",
+        )
+    except Exception as exc:
+        with map_service_errors("Facial-expression analysis failed."):
+            raise exc
