@@ -11,7 +11,7 @@ import Privacy from './pages/Privacy'
 import Wellness from './pages/Wellness'
 
 export default function App() {
-  const { user, ready } = useAuth()
+  const { ready } = useAuth()
 
   if (!ready) {
     return (
@@ -22,14 +22,6 @@ export default function App() {
           <div className="skeleton" style={{ marginTop: 8 }} />
         </div>
       </div>
-    )
-  }
-
-  if (!user) {
-    return (
-      <Routes>
-        <Route path="*" element={<Login />} />
-      </Routes>
     )
   }
 
@@ -48,3 +40,4 @@ export default function App() {
     </Layout>
   )
 }
+

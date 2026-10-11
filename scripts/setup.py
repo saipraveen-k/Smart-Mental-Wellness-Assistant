@@ -24,7 +24,7 @@ def setup_environment():
     ]
     for d in dirs:
         d.mkdir(parents=True, exist_ok=True)
-        print(f"      ✓ {d.relative_to(REPO_ROOT)}")
+        print(f"      [OK] {d.relative_to(REPO_ROOT)}")
 
     print("[2/3] Checking environment configuration (.env) ...")
     env_file = REPO_ROOT / ".env"
@@ -32,11 +32,11 @@ def setup_environment():
     if not env_file.exists():
         if env_example.exists():
             shutil.copy(env_example, env_file)
-            print("      ✓ Created .env from .env.example")
+            print("      [OK] Created .env from .env.example")
         else:
-            print("      ⚠ .env.example not found")
+            print("      [!] .env.example not found")
     else:
-        print("      ✓ .env file present.")
+        print("      [OK] .env file present.")
 
     print("[3/3] Verification of core dependencies ...")
     try:
@@ -46,10 +46,10 @@ def setup_environment():
         import cv2
         import fastapi
         import pymongo
-        print("      ✓ Core dependencies import successfully.")
+        print("      [OK] Core dependencies import successfully.")
         print(f"        PyTorch {torch.__version__} | CUDA Available: {torch.cuda.is_available()}")
     except ImportError as exc:
-        print(f"      ✖ Missing dependency: {exc}")
+        print(f"      [X] Missing dependency: {exc}")
         return 1
 
     print("Setup completed successfully!")
@@ -57,3 +57,4 @@ def setup_environment():
 
 if __name__ == "__main__":
     sys.exit(setup_environment())
+

@@ -15,42 +15,70 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null)
 
+const GUEST_USER: User = {
+  id: 'guest_user',
+  email: 'guest@smwa.local',
+  name: 'Guest User',
+  created_at: new Date().toISOString(),
+  consent: {
+    save_mood_history: true,
+    camera_access: true,
+    store_images: false,
+    consent_updated_at: new Date().toISOString(),
+  },
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<User>(GUEST_USER)
   const [ready, setReady] = useState(false)
 
-  const fetchMe = useCallback(async () => {
-    // The backend has no /me endpoint; recover the user via privacy/consent.
+  const initGuest = useCallback(async () => {
     try {
-      const data = await api<{ consent: Consent; data_we_store: string[] }>('/api/privacy/consent')
-      setUser((prev) => (prev ? { ...prev, consent: data.consent } : prev))
+      const data = await api<{ token: string; user: User }>('/api/auth/guest', {
+        method: 'POST',
+        auth: false,
+      })
+      setToken(data.token)
+      setUser(data.user)
+      localStorage.setItem('smwa_user', JSON.stringify(data.user))
     } catch {
-      setToken(null)
-      setUser(null)
+      setUser(GUEST_USER)
+      localStorage.setItem('smwa_user', JSON.stringify(GUEST_USER))
     }
   }, [])
+
+  const fetchMe = useCallback(async () => {
+    try {
+      const data = await api<{ consent: Consent; data_we_store: string[] }>('/api/privacy/consent')
+      setUser((prev) => ({ ...prev, consent: data.consent }))
+    } catch {
+      await initGuest()
+    }
+  }, [initGuest])
 
   useEffect(() => {
     const stored = localStorage.getItem('smwa_user')
     const token = getToken()
     if (stored && token) {
-      setUser(JSON.parse(stored))
+      try {
+        setUser(JSON.parse(stored))
+      } catch {
+        setUser(GUEST_USER)
+      }
       fetchMe().finally(() => setReady(true))
     } else {
-      setReady(true)
+      initGuest().finally(() => setReady(true))
     }
     const onUnauthorized = () => {
-      setUser(null)
-      localStorage.removeItem('smwa_user')
+      initGuest()
     }
     window.addEventListener('smwa:unauthorized', onUnauthorized)
     return () => window.removeEventListener('smwa:unauthorized', onUnauthorized)
-  }, [fetchMe])
+  }, [fetchMe, initGuest])
 
-  const persist = (u: User | null) => {
+  const persist = (u: User) => {
     setUser(u)
-    if (u) localStorage.setItem('smwa_user', JSON.stringify(u))
-    else localStorage.removeItem('smwa_user')
+    localStorage.setItem('smwa_user', JSON.stringify(u))
   }
 
   const login = useCallback(async (email: string, password: string) => {
@@ -74,9 +102,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const logout = useCallback(() => {
-    setToken(null)
-    persist(null)
-  }, [])
+    initGuest()
+  }, [initGuest])
 
   const updateConsent = useCallback(
     async (patch: Partial<Consent>) => {
@@ -84,7 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         method: 'PUT',
         body: patch,
       })
-      setUser((prev) => (prev ? { ...prev, consent: data.consent } : prev))
+      setUser((prev) => ({ ...prev, consent: data.consent }))
       return data.consent
     },
     [],
@@ -97,6 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
+
 
 export function useAuth(): AuthState {
   const ctx = useContext(AuthContext)

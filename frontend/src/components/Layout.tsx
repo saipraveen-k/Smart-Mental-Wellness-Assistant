@@ -40,13 +40,13 @@ export default function Layout({ children }: { children: ReactNode }) {
         ))}
         <div className="sidebar-footer">
           <div className="row between">
-            <span>{user?.name}</span>
+            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>🌿 {user?.name || 'Guest User'}</span>
             <button className="small secondary" onClick={toggleTheme} aria-label="Toggle dark mode">
               🌓
             </button>
           </div>
           <div style={{ marginTop: 8 }}>
-            <button className="small secondary" onClick={logout}>Sign out</button>
+            <button className="small secondary" onClick={logout} title="Reset session state">Reset Session</button>
           </div>
           <p style={{ marginTop: 12 }}>
             AI-assisted wellness support — not a medical diagnostic system, therapist, or emergency service.

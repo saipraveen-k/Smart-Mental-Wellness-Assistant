@@ -46,13 +46,28 @@ def register(payload: RegisterRequest, request: Request):
     return success({"token": token, "user": _public_user(user)})
 
 
-@router.post("/login")
-@limiter.limit(f"{settings.auth_rate_limit_per_minute}/minute")
-def login(payload: LoginRequest, request: Request):
-    """Authenticate and receive a JWT."""
-    user = database.find_user_by_email(payload.email)
-    if not user or not verify_password(payload.password, user.get("password_hash", "")):
-        raise ApiError("INVALID_CREDENTIALS", "Email or password is incorrect.", status_code=401,
-                       suggestion="Check your credentials and try again.")
-    token = create_access_token(user["id"], user["email"])
-    return success({"token": token, "user": _public_user(user)})
+@router.post("/guest")
+@router.get("/guest")
+def guest_session():
+    """Create or retrieve a guest session instantly without credentials."""
+    guest_email = "guest@smwa.local"
+    try:
+        if database.ping():
+            guest_user = database.find_user_by_email(guest_email)
+            if not guest_user:
+                guest_user = database.create_user(guest_email, hash_password("guest123"), "Guest User")
+            token = create_access_token(guest_user["id"], guest_user["email"])
+            return success({"token": token, "user": _public_user(guest_user)})
+    except Exception as exc:
+        logger.warning("guest session fallback due to error: %s", exc)
+
+    guest_dict = {
+        "id": "guest_user",
+        "email": guest_email,
+        "name": "Guest User",
+        "consent": {"save_mood_history": True, "camera_access": True, "store_images": False},
+        "created_at": None,
+    }
+    token = create_access_token("guest_user", guest_email)
+    return success({"token": token, "user": guest_dict})
+

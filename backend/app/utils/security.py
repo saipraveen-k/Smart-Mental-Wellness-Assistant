@@ -48,30 +48,37 @@ def decode_access_token(token: str) -> Dict[str, Any]:
 def get_current_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
 ) -> Dict[str, Any]:
-    """FastAPI dependency: resolves the authenticated user or raises 401."""
+    """FastAPI dependency: resolves authenticated user or defaults to Guest user."""
     from app.database.mongo import database
 
-    if credentials is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"code": "AUTH_REQUIRED", "message": "Authentication required."},
-        )
+    if credentials is not None and credentials.credentials:
+        try:
+            payload = decode_access_token(credentials.credentials)
+            user = database.get_user(payload.get("sub", ""))
+            if user:
+                return user
+        except Exception as exc:
+            logger.debug("token validation failed, falling back to guest: %s", exc)
+
+    # Guest user fallback so application is open and accessible to all
+    guest_email = "guest@smwa.local"
     try:
-        payload = decode_access_token(credentials.credentials)
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"code": "TOKEN_EXPIRED", "message": "Session expired. Please sign in again."},
-        )
-    except jwt.InvalidTokenError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"code": "INVALID_TOKEN", "message": "Invalid authentication token."},
-        )
-    user = database.get_user(payload.get("sub", ""))
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"code": "USER_NOT_FOUND", "message": "Account no longer exists."},
-        )
-    return user
+        if database.ping():
+            guest_user = database.find_user_by_email(guest_email)
+            if not guest_user:
+                guest_user = database.create_user(guest_email, hash_password("guest123"), "Guest User")
+            return guest_user
+    except Exception as exc:
+        logger.warning("failed to fetch/create guest user in db: %s", exc)
+
+    return {
+        "id": "guest_user",
+        "email": guest_email,
+        "name": "Guest User",
+        "consent": {
+            "save_mood_history": True,
+            "camera_access": True,
+            "store_images": False,
+        },
+    }
+
