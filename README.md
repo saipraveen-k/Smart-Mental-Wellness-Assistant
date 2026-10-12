@@ -216,6 +216,7 @@ Deployment guide is documented in [`docs/DEPLOYMENT.md`](file:///c:/tempp/projec
 | [`docs/PRIVACY.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/PRIVACY.md) | Consent management, zero-permanent storage of camera frames, data export/purge policy. |
 | [`docs/TESTING.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/TESTING.md) | Test suite breakdown (Unit, API, Security, Integration) and health check automation. |
 | [`docs/DEPLOYMENT.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/DEPLOYMENT.md) | Docker Compose specification, environment variable reference, production readiness. |
+| [`docs/EXECUTION_GUIDE.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/EXECUTION_GUIDE.md) | Step-by-step local & Docker execution guide, verification, and sitemap. |
 
 ---
 

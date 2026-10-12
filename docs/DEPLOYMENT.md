@@ -62,3 +62,8 @@ docker-compose logs -f
 # Verify status
 python scripts/health_check.py
 ```
+
+---
+
+For a complete step-by-step walk-through, troubleshooting checklist, and application sitemap, see [`docs/EXECUTION_GUIDE.md`](file:///c:/tempp/projects/clg/ML/Smart%20Mental%20Wellness%20Assistant/docs/EXECUTION_GUIDE.md).
+
