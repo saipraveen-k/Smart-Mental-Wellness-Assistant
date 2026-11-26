@@ -1,11 +1,11 @@
 # Smart Mental Wellness Assistant — backend runtime dependencies
 fastapi==0.110.0
 uvicorn[standard]>=0.27
-pydantic>=2.5
+pydantic[email]>=2.5
 python-dotenv>=1.0
 python-multipart>=0.0.9
 aiofiles>=23.2
-httpx>=0.27
+httpx>=0.27,<0.28  # fastapi 0.110 (starlette 0.36) TestClient breaks on httpx 0.28
 slowapi>=0.1.9
 
 # --- ML / NLP / CV ---
